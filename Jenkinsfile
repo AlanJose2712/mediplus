@@ -3,7 +3,7 @@ pipeline {
   environment {
     IMAGE       = 'alanjose2929/mediplus'
     REPO        = 'github.com/AlanJose2712/mediplus.git'
-    TRIVY_CACHE = '/home/ubuntu/trivy-cache'
+    TRIVY_CACHE = '/var/lib/jenkins/trivy-cache'
   }
   stages {
     stage('1. Checkout') {
@@ -52,8 +52,8 @@ pipeline {
             docker rm -f mediplus-test || true
             docker run -d --name mediplus-test -p 18082:8000 ${IMAGE}:${BUILD_NUMBER}
             sleep 15
-            mkdir -p /home/ubuntu/zap-out && chmod 777 /home/ubuntu/zap-out
-            docker run --rm --network host -v /home/ubuntu/zap-out:/zap/wrk:rw \
+            mkdir -p /var/lib/jenkins/zap-out && chmod 777 /var/lib/jenkins/zap-out
+            docker run --rm --network host -v /var/lib/jenkins/zap-out:/zap/wrk:rw \
               ghcr.io/zaproxy/zaproxy:stable zap-baseline.py \
               -t http://127.0.0.1:18082/home -r mediplus-zap.html
           '''
