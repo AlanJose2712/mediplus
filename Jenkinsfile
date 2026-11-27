@@ -3,7 +3,6 @@ pipeline {
   environment {
     IMAGE       = 'alanjose2929/mediplus'
     REPO        = 'github.com/AlanJose2712/mediplus.git'
-    SEMGREP     = '/home/ubuntu/scanvenv/bin/semgrep'
     TRIVY_CACHE = '/home/ubuntu/trivy-cache'
   }
   stages {
@@ -19,7 +18,7 @@ pipeline {
     }
     stage('2. Semgrep SAST') {
       when { expression { env.SKIP != 'true' } }
-      steps { sh '${SEMGREP} --config auto --exclude static --exclude media . || true' }
+      steps { sh 'docker run --rm -v "$WORKSPACE:/src" -w /src semgrep/semgrep semgrep --config auto --exclude static --exclude media --exclude staticfiles . || true' }
     }
     stage('3. Trivy FS') {
       when { expression { env.SKIP != 'true' } }
@@ -56,7 +55,7 @@ pipeline {
             mkdir -p /home/ubuntu/zap-out && chmod 777 /home/ubuntu/zap-out
             docker run --rm --network host -v /home/ubuntu/zap-out:/zap/wrk:rw \
               ghcr.io/zaproxy/zaproxy:stable zap-baseline.py \
-              -t http://127.0.0.1:18082 -r mediplus-zap.html
+              -t http://127.0.0.1:18082/home -r mediplus-zap.html
           '''
         }
         sh 'docker rm -f mediplus-test || true'
