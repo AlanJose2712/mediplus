@@ -85,3 +85,8 @@ def adminapp_view(request):
   
     data=appointment_details.objects.all()
     return render(request,'adminapp_view.html',{'result':data})
+
+
+def userdelete(request, id):
+    user_details.objects.filter(id=id).delete()
+    return redirect('/userview')

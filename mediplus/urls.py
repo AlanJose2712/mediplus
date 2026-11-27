@@ -40,3 +40,11 @@ urlpatterns = [
 
 ]+ static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
  
+
+# Serve uploaded media even when DEBUG=False
+from django.conf import settings as _settings
+from django.urls import re_path as _re_path
+from django.views.static import serve as _serve
+urlpatterns += [
+    _re_path(r'^media/(?P<path>.*)$', _serve, {'document_root': _settings.MEDIA_ROOT}),
+]
