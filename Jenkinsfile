@@ -55,7 +55,7 @@ pipeline {
             mkdir -p /var/lib/jenkins/zap-out && chmod 777 /var/lib/jenkins/zap-out
             docker run --rm --network host -v /var/lib/jenkins/zap-out:/zap/wrk:rw \
               ghcr.io/zaproxy/zaproxy:stable zap-baseline.py \
-              -t http://127.0.0.1:18082/home -r mediplus-zap.html
+              -t http://127.0.0.1:18082/home -I -r mediplus-zap.html
           '''
         }
         sh 'docker rm -f mediplus-test || true'
